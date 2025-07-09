@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Notes - Notes Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .note-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        @media (min-width: 768px) {
+            .desktop-table {
+                display: table;
+            }
+            .mobile-card {
+                display: none;
+            }
+        }
+        @media (max-width: 767px) {
+            .desktop-table {
+                display: none;
+            }
+            .mobile-card {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h2 class="mb-4 text-center">📚 All Notes & Materials</h2>
+
+        <!-- Search & Filter Form -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Search by title or subject">
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="Notes" {% if selected_type == 'Notes' %}selected{% endif %}>Notes</option>
+                    <option value="Question Paper" {% if selected_type == 'Question Paper' %}selected{% endif %}>Question Paper</option>
+                    <option value="Model Paper" {% if selected_type == 'Model Paper' %}selected{% endif %}>Model Paper</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="level" class="form-select">
+                    <option value="">All Levels</option>
+                    <option value="Class 10" {% if selected_level == 'Class 10' %}selected{% endif %}>Class 10</option>
+                    <option value="PUC" {% if selected_level == 'PUC' %}selected{% endif %}>PUC</option>
+                    <option value="Degree" {% if selected_level == 'Degree' %}selected{% endif %}>Degree</option>
+                    <option value="Competitive" {% if selected_level == 'Competitive' %}selected{% endif %}>Competitive</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" type="submit">Search</button>
+            </div>
+        </form>
+
+        <!-- Desktop Table Layout -->
+        <div class="desktop-table">
+            <table class="table table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                    <tr>
+                        <td>{{ note[0] }}</td>
+                        <td>{{ note[1] }}</td>
+                        <td>{{ note[2] }}</td>
+                        <td>
+                            <a href="{{ url_for('static', filename='uploads/' ~ note[3]) }}" class="btn btn-sm btn-success" target="_blank">Download</a>
+                            {% if session.get('admin') %}
+                                <a href="/edit/{{ note[4] }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="/delete/{{ note[4] }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Card Layout -->
+        <div class="mobile-card">
+            {% for note in notes %}
+            <div class="note-card">
+                <h5>{{ note[0] }}</h5>
+                <p><strong>Subject:</strong> {{ note[1] }}<br>
+                   <strong>Type:</strong> {{ note[2] }}</p>
+                <a href="{{ url_for('static', filename='uploads/' ~ note[3]) }}" class="btn btn-success mb-1" target="_blank">Download</a>
+                {% if session.get('admin') %}
+                    <a href="/edit/{{ note[4] }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="/delete/{{ note[4] }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

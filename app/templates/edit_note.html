@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Note</title>
+</head>
+<body>
+    <h2>Edit Note</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <p>{{ form.title.label }} {{ form.title(size=40) }}</p>
+        <p>{{ form.subject.label }} {{ form.subject(size=40) }}</p>
+        <p>{{ form.file.label }} {{ form.file() }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+</body>
+</html>
