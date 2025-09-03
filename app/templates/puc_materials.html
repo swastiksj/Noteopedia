@@ -33,7 +33,7 @@
 </head>
 <body>
     <div class="container py-5">
-        <h2 class="mb-4 text-center">📚 PUC notes & Materials</h2>
+        <h2 class="mb-4 text-center">📚 PUC Notes & Materials</h2>
 
         <!-- Desktop Table Layout -->
         <div class="desktop-table">
@@ -47,39 +47,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Static notes -->
-                    <tr>
-                        <td>2nd PU MATHS STUDY MATERIAL</td>
-                        <td>Mathematics</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='2nd_pu_maths_study_material.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>1st PU BIOLOGY STUDY MATERIAL</td>
-                        <td>Biology</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='1pu_biostudy.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>2nd PU CHEMISTRY STUDY MATERIAL</td>
-                        <td>Chemistry</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='2pu_che_study_material.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>2nd PU BIOLOGY NOTES</td>
-                        <td>Biology</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='2ndpuc_bionotes.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-
-                    <!-- Dynamic notes -->
                     {% for note in notes %}
                     <tr>
                         <td>{{ note.title }}</td>
                         <td>{{ note.subject }}</td>
                         <td>{{ note.type }}</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename=note.filename) }}" class="btn btn-sm btn-success">Download</a></td>
+                        <td><a href="{{ note.file_url }}" class="btn btn-sm btn-success" target="_blank">Download</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -88,34 +61,11 @@
 
         <!-- Mobile Card Layout -->
         <div class="mobile-card">
-            <!-- Static Notes -->
-            <div class="note-card">
-                <h5>2ND PU MATHS STUDY MATERIAL</h5>
-                <p><strong>Subject:</strong> Mathematics <br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='2nd_pu_maths_study_material.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>1st PU BIOLOGY STUDY MATERIAL</h5>
-                <p><strong>Subject:</strong> Biology<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='1pu_biostudy.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>2ND PU CHEMISTRY STUDY MATERIAL</h5>
-                <p><strong>Subject:</strong> Chemistry<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='2pu_che_study_material.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>2ND PU BIOLOGY NOTES</h5>
-                <p><strong>Subject:</strong> Biology<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='2ndpuc_bionotes.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-
-            <!-- Dynamic Notes -->
             {% for note in notes %}
             <div class="note-card">
                 <h5>{{ note.title }}</h5>
                 <p><strong>Subject:</strong> {{ note.subject }}<br><strong>Type:</strong> {{ note.type }}</p>
-                <a href="{{ url_for('main.uploaded_file', filename=note.filename) }}" class="btn btn-success">Download</a>
+                <a href="{{ note.file_url }}" class="btn btn-success" target="_blank">Download</a>
             </div>
             {% endfor %}
         </div>

@@ -1,41 +1,29 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_from_directory
-from werkzeug.utils import secure_filename
-from flask_login import login_user, logout_user, UserMixin, login_required
+import cloudinary.uploader
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from flask_login import login_user, logout_user, UserMixin
 from sqlalchemy import text
-
+from .forms import QuestionForm, LoginForm, UploadForm, EditForm, ContactForm
 from .models import Note, Contact, db
-from .forms import LoginForm, UploadForm, EditForm, ContactForm
+
+# Import Google Gemini client
+from google import genai
 
 main = Blueprint('main', __name__)
-UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 
+# Initialize Gemini client
+gemini_client = genai.Client(api_key=os.environ.get("GOOGLE_GEMINI_API_KEY"))
 
 # Dummy Admin User for Flask-Login
 class AdminUser(UserMixin):
     id = 1
 
-
-# Home Route
-@main.route('/')
+# Home Page
+@main.route("/")
 def index():
+    # Get the 4 most recent uploads
     latest_notes = Note.query.order_by(Note.created_at.desc()).limit(4).all()
-
-    # Get notes by level
-    class10_notes = Note.query.filter_by(level='Class 10').order_by(Note.created_at.desc()).limit(4).all()
-    puc_notes = Note.query.filter_by(level='PUC').order_by(Note.created_at.desc()).limit(4).all()
-    degree_notes = Note.query.filter_by(level='Degree').order_by(Note.created_at.desc()).limit(4).all()
-    competitive_notes = Note.query.filter_by(level='Competitive').order_by(Note.created_at.desc()).limit(4).all()
-
-    return render_template('index.html', 
-        latest_notes=latest_notes,
-        class10_notes=class10_notes,
-        puc_notes=puc_notes,
-        degree_notes=degree_notes,
-        competitive_notes=competitive_notes
-    )
-
-
+    return render_template("index.html", latest_notes=latest_notes)
 
 # Admin Login
 @main.route('/admin-login', methods=['GET', 'POST'])
@@ -46,12 +34,10 @@ def admin_login():
             login_user(AdminUser())
             session['admin'] = True
             flash('Login successful!', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('main.admin_dashboard'))
+            return redirect(request.args.get('next') or url_for('main.admin_dashboard'))
         else:
             flash('Invalid credentials!', 'danger')
     return render_template('admin_login.html', form=form)
-
 
 # Admin Logout
 @main.route('/logout')
@@ -61,35 +47,34 @@ def logout():
     flash('Logged out successfully.', 'info')
     return redirect(url_for('main.index'))
 
-
 # Admin Dashboard
 @main.route('/admin-dashboard')
 def admin_dashboard():
     if not session.get('admin'):
         return redirect(url_for('main.admin_login'))
-
     form = UploadForm()
     notes = Note.query.all()
     return render_template('admin_dashboard.html', notes=notes, form=form)
 
-
-# Upload Note
+# Upload Note (Cloudinary)
 @main.route('/upload-note', methods=['POST'])
 def upload_note():
     form = UploadForm()
     if form.validate_on_submit():
         file = form.pdf_file.data
         if file:
-            filename = secure_filename(file.filename)
-            upload_path = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(upload_path)
-
+            result = cloudinary.uploader.upload(
+                file,
+                resource_type="raw",
+                folder="noteopedia_pdfs"
+            )
+            file_url = result.get("secure_url")
             new_note = Note(
                 title=form.title.data,
                 subject=form.subject.data,
                 level=form.level.data,
                 type=form.type.data,
-                filename=filename
+                file_url=file_url
             )
             db.session.add(new_note)
             db.session.commit()
@@ -98,7 +83,6 @@ def upload_note():
 
     flash('❌ Failed to upload note.', 'danger')
     return redirect(url_for('main.admin_dashboard'))
-
 
 # Edit Note
 @main.route('/edit/<int:note_id>', methods=['GET', 'POST'])
@@ -113,7 +97,6 @@ def edit_note(note_id):
         return redirect(url_for('main.admin_dashboard'))
     return render_template('edit_note.html', form=form)
 
-
 # Delete Note
 @main.route('/delete/<int:note_id>', methods=['POST'])
 def delete_note(note_id):
@@ -123,22 +106,10 @@ def delete_note(note_id):
     flash('Note deleted!', 'success')
     return redirect(url_for('main.admin_dashboard'))
 
-
-# Serve Uploaded Files
-@main.route('/uploads/<filename>')
-def uploaded_file(filename):
-    note = Note.query.filter_by(filename=filename).first()
-    if note:
-        note.download_count += 1
-        db.session.commit()
-    return send_from_directory(os.path.join('static', 'uploads'), filename)
-
-
 # About Page
 @main.route('/about')
 def about():
     return render_template('about.html')
-
 
 # Contact Page
 @main.route('/contact', methods=['GET', 'POST'])
@@ -156,8 +127,7 @@ def contact():
         return redirect(url_for('main.contact'))
     return render_template('contact.html', form=form)
 
-
-# Category View Page
+# Category View
 @main.route('/category/<category_name>')
 def category_view(category_name):
     level_map = {
@@ -166,16 +136,11 @@ def category_view(category_name):
         'degree_notes': 'Degree',
         'competitive': 'Competitive'
     }
-
     level = level_map.get(category_name)
     if not level:
         return "Category not found", 404
-
     notes = Note.query.filter_by(level=level).order_by(Note.created_at.desc()).all()
     return render_template(f'{category_name}.html', notes=notes, category=level)
-
-
-
 
 # Browse/Search Notes
 @main.route('/browse')
@@ -184,7 +149,7 @@ def browse_notes():
     selected_type = request.args.get('type', '')
     selected_level = request.args.get('level', '')
 
-    query = "SELECT title, subject, type, filename, id FROM note WHERE 1=1"
+    query = "SELECT title, subject, type, file_url, id FROM note WHERE 1=1"
     filters = {}
 
     if search:
@@ -201,3 +166,21 @@ def browse_notes():
 
     notes = db.session.execute(text(query), filters).fetchall()
     return render_template('search.html', notes=notes, search=search, selected_type=selected_type, selected_level=selected_level)
+
+# Ask Question (Google Gemini)
+@main.route('/ask', methods=['GET', 'POST'])
+def ask_question():
+    form = QuestionForm()
+    answer = None
+    if form.validate_on_submit():
+        user_question = form.question.data
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=user_question
+            )
+            answer = response.text
+        except Exception as e:
+            answer = f"Error: {str(e)}"
+
+    return render_template("ask.html", form=form, answer=answer)

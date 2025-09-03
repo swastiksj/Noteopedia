@@ -126,6 +126,10 @@
   <a href="{{ url_for('main.browse_notes') }}">
     <button class="btn btn-outline-light">📚 Browse Materials</button>
   </a>
+    <a href="{{ url_for('main.ask_question') }}">
+    <button class="btn btn-outline-dark" >Ask Doubt🤖</button>
+    </a>
+
 </div>
 
 <!-- CATEGORY SECTION -->
@@ -188,8 +192,7 @@
                     <strong>Subject:</strong> {{ note.subject }}<br>
                     <strong>Type:</strong> {{ note.type }}
                 </p>
-                <a href="{{ url_for('main.uploaded_file', filename=note.filename) }}" class="btn btn-primary" target="_blank">Download</a>
-
+                <a href="{{ note.file_url }}" class="btn btn-primary" target="_blank">Download</a>
             </div>
         </div>
     </div>

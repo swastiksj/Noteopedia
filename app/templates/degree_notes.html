@@ -47,39 +47,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Static notes -->
-                    <tr>
-                        <td>2nd SEM BOTANY 5 MARKS IMP</td>
-                        <td>Botany</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='BOTONY_SEP_IMPORTANT_QUESTION.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>2nd SEM BOTANY 2 MARKS IMP</td>
-                        <td>Botany</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='BOTONY_SEP_2MARKS.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>2nd SEM CHEMISTRY 5 MARKS IMP</td>
-                        <td>Chemistry</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='che_5_marks.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>2nd SEM CHEMISTRY 2 MARKS IMP</td>
-                        <td>Chemistry</td>
-                        <td>Notes</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename='che_2mark.pdf')}}" class="btn btn-sm btn-success">Download</a></td>
-                    </tr>
-
-                    <!-- Dynamic notes -->
                     {% for note in notes %}
                     <tr>
                         <td>{{ note.title }}</td>
                         <td>{{ note.subject }}</td>
                         <td>{{ note.type }}</td>
-                        <td><a href="{{ url_for('main.uploaded_file', filename=note.filename) }}" class="btn btn-sm btn-success">Download</a></td>
+                        <td><a href="{{ note.file_url }}" class="btn btn-sm btn-success" target="_blank">Download</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -88,34 +61,11 @@
 
         <!-- Mobile Card Layout -->
         <div class="mobile-card">
-            <!-- Static Notes -->
-            <div class="note-card">
-                <h5>2ND SEM BOTANY 5 MARKS IMP</h5>
-                <p><strong>Subject:</strong> Botany<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='BOTONY_SEP_IMPORTANT_QUESTION.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>2ND SEM BOTANY 2 MARKS IMP</h5>
-                <p><strong>Subject:</strong> Botany<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='BOTONY_SEP_2MARKS.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>2ND SEM CHEMISTRY 5 MARKS IMP</h5>
-                <p><strong>Subject:</strong> Chemistry<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='che_5_marks.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-            <div class="note-card">
-                <h5>2ND SEM CHEMISTRY 2 MARKS IMP</h5>
-                <p><strong>Subject:</strong> Chemistry<br><strong>Type:</strong> Notes</p>
-                <a href="{{ url_for('main.uploaded_file', filename='che_2mark.pdf')}}" class="btn btn-success">Download</a>
-            </div>
-
-            <!-- Dynamic Notes -->
             {% for note in notes %}
             <div class="note-card">
                 <h5>{{ note.title }}</h5>
                 <p><strong>Subject:</strong> {{ note.subject }}<br><strong>Type:</strong> {{ note.type }}</p>
-                <a href="{{ url_for('main.uploaded_file', filename=note.filename) }}" class="btn btn-success">Download</a>
+                <a href="{{ note.file_url }}" class="btn btn-success" target="_blank">Download</a>
             </div>
             {% endfor %}
         </div>
