@@ -192,7 +192,7 @@
                     <strong>Subject:</strong> {{ note.subject }}<br>
                     <strong>Type:</strong> {{ note.type }}
                 </p>
-                <a href="{{ note.file_url }}" class="btn btn-primary" target="_blank">Download</a>
+                <a href="{{ note.file_url | replace('/upload/', '/upload/fl_attachment/') }}" target="_blank">Download</a>
             </div>
         </div>
     </div>

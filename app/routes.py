@@ -68,7 +68,9 @@ def upload_note():
                 resource_type="raw",
                 folder="noteopedia_pdfs"
             )
-            file_url = result.get("secure_url")
+            # Force direct download link for PDFs
+            file_url = result.get("secure_url").replace("/upload/", "/upload/fl_attachment/")
+
             new_note = Note(
                 title=form.title.data,
                 subject=form.subject.data,
