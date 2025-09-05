@@ -46,11 +46,7 @@ def create_app():
 
             # Add forced download transformation
             url = url.replace("/upload/", f"/upload/fl_attachment:{safe_name}/")
-
-            # Ensure final URL ends with .pdf
-            if not url.endswith(".pdf"):
-                url += ".pdf"
-
+            
         return url
 
     # Register routes
