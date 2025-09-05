@@ -52,7 +52,7 @@
                         <td>{{ note.title }}</td>
                         <td>{{ note.subject }}</td>
                         <td>{{ note.type }}</td>
-                        <td><a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download</a></td>
+                        <td><a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download PDF</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
