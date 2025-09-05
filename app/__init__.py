@@ -36,18 +36,15 @@ def create_app():
         if not url:
             return url
 
-        # Convert /raw/upload/ → /image/upload/
         if "/raw/upload/" in url:
-            url = url.replace("/raw/upload/", "/image/upload/")
-
-        if "/upload/" in url:
-            # Ensure a safe filename with .pdf extension
+            # Ensure a safe filename
             safe_name = filename if filename and filename.endswith(".pdf") else f"{filename or 'Noteopedia'}.pdf"
 
             # Add forced download transformation
-            url = url.replace("/upload/", f"/upload/fl_attachment:{safe_name}/")
-            
+            url = url.replace("/raw/upload/", f"/raw/upload/fl_attachment:{safe_name}/")
+
         return url
+
 
     # Register routes
     from .routes import main
