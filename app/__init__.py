@@ -30,14 +30,27 @@ def create_app():
         api_secret=app.config['CLOUDINARY_API_SECRET']
     )
 
-    # ✅ Register Jinja filter to force Cloudinary links as .pdf downloads
+    # ✅ Jinja filter to always force Cloudinary PDFs to download
     @app.template_filter('force_pdf_download')
     def force_pdf_download(url, filename=None):
         if not url:
             return url
+
+        # Convert /raw/upload/ → /image/upload/
+        if "/raw/upload/" in url:
+            url = url.replace("/raw/upload/", "/image/upload/")
+
         if "/upload/" in url:
+            # Ensure a safe filename with .pdf extension
             safe_name = filename if filename and filename.endswith(".pdf") else f"{filename or 'Noteopedia'}.pdf"
-            return url.replace("/upload/", f"/upload/fl_attachment:{safe_name}/")
+
+            # Add forced download transformation
+            url = url.replace("/upload/", f"/upload/fl_attachment:{safe_name}/")
+
+            # Ensure final URL ends with .pdf
+            if not url.endswith(".pdf"):
+                url += ".pdf"
+
         return url
 
     # Register routes
