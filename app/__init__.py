@@ -36,10 +36,8 @@ def create_app():
         if not url:
             return url
         if "/upload/" in url:
-            if filename:
-                return url.replace("/upload/", f"/upload/fl_attachment:{filename}/")
-            else:
-                return url.replace("/upload/", "/upload/fl_attachment/")
+            safe_name = filename if filename and filename.endswith(".pdf") else f"{filename or 'Noteopedia'}.pdf"
+            return url.replace("/upload/", f"/upload/fl_attachment:{safe_name}/")
         return url
 
     # Register routes
