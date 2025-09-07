@@ -99,7 +99,10 @@
                 <h5>{{ note[0] }}</h5>
                 <p><strong>Subject:</strong> {{ note[1] }}<br>
                    <strong>Type:</strong> {{ note[2] }}</p>
-                <a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download</a>
+                <a href="{{ note.file_url }}" class="btn btn-sm btn-success" download>
+    📄 Download PDF
+</a>
+
                 {% if session.get('admin') %}
                     <a href="/edit/{{ note[4] }}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="/delete/{{ note[4] }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>

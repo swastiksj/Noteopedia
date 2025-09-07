@@ -52,7 +52,10 @@
                         <td>{{ note.title }}</td>
                         <td>{{ note.subject }}</td>
                         <td>{{ note.type }}</td>
-                        <td><a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download PDF</a></td>
+                        <td><a href="{{ note.file_url }}" class="btn btn-sm btn-success" download>
+    📄 Download PDF
+</a>
+</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -65,7 +68,10 @@
             <div class="note-card">
                 <h5>{{ note.title }}</h5>
                 <p><strong>Subject:</strong> {{ note.subject }}<br><strong>Type:</strong> {{ note.type }}</p>
-                <a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download</a>
+                <a href="{{ note.file_url }}" class="btn btn-sm btn-success" download>
+    📄 Download PDF
+</a>
+
             </div>
             {% endfor %}
         </div>

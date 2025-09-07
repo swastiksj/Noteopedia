@@ -192,7 +192,9 @@
                     <strong>Subject:</strong> {{ note.subject }}<br>
                     <strong>Type:</strong> {{ note.type }}
                 </p>
-                <a href="{{ note.file_url | force_pdf_download(note.filename) }}">Download</a>
+               <a href="{{ note.file_url }}" class="btn btn-sm btn-success" download="Noteopedia.pdf">
+    📄 Download PDF
+</a>
             </div>
         </div>
     </div>

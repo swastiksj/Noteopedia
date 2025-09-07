@@ -5,15 +5,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
-
 load_dotenv()
 
-from .config import Config  # Import your updated Config class
+
+from .config import Config  # Make sure to import your updated Config class
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'main.admin_login'
-
 
 def create_app():
     app = Flask(__name__)
@@ -30,27 +29,11 @@ def create_app():
         api_secret=app.config['CLOUDINARY_API_SECRET']
     )
 
-    # ✅ Jinja filter to always force Cloudinary PDFs to download
-    @app.template_filter('force_pdf_download')
-    def force_pdf_download(url, filename=None):
-        if not url:
-            return url
-
-        if "/raw/upload/" in url:
-            # Ensure a safe filename
-            safe_name = filename if filename and filename.endswith(".pdf") else f"{filename or 'Noteopedia'}.pdf"
-
-            # Add forced download transformation
-            url = url.replace("/raw/upload/", f"/raw/upload/fl_attachment:{safe_name}/")
-
-        return url
-
-
     # Register routes
     from .routes import main
     app.register_blueprint(main)
 
-    # Ensure local upload folder exists (optional if fully Cloudinary-based)
+    # Ensure local upload folder exists (optional now)
     with app.app_context():
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
             os.makedirs(app.config['UPLOAD_FOLDER'])
