@@ -52,7 +52,7 @@
                         <td>{{ note.title }}</td>
                         <td>{{ note.subject }}</td>
                         <td>{{ note.type }}</td>
-                        <td><a href="{{ note.file_url | replace('/upload/', '/upload/fl_attachment/') }}" target="_blank">Download</a></td>
+                        <td><a href="{{ note.file_url }}" download="{{ note.title }}.pdf">Download</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -65,7 +65,7 @@
             <div class="note-card">
                 <h5>{{ note.title }}</h5>
                 <p><strong>Subject:</strong> {{ note.subject }}<br><strong>Type:</strong> {{ note.type }}</p>
-                <a href="{{ note.file_url | replace('/upload/', '/upload/fl_attachment/') }}" target="_blank">Download</a>
+                <a href="{{ note.file_url }}" download="{{ note.title }}.pdf">Download</a>
             </div>
             {% endfor %}
         </div>

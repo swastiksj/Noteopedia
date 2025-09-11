@@ -1,8 +1,8 @@
 # app/forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, FileField
 from wtforms.validators import DataRequired, Email
-from flask_wtf.file import FileField, FileRequired, FileAllowed
+from flask_wtf.file import FileRequired, FileAllowed
 
 
 # Admin Login Form
@@ -31,7 +31,7 @@ class UploadForm(FlaskForm):
         choices=[
             ('Notes', 'Notes'),
             ('Question Paper', 'Question Paper'),
-            ('Model Paper', 'Model Paper')
+            ('Study Material', 'Study Material')
         ],
         validators=[DataRequired()]
     )
@@ -47,8 +47,9 @@ class UploadForm(FlaskForm):
 
 # Edit Form
 class EditForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    subject = StringField('Subject', validators=[DataRequired()])
+    title = StringField('Title')
+    subject = StringField('Subject')
+    file = FileField('Upload PDF')
     submit = SubmitField('Update')
 
 

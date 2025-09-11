@@ -45,7 +45,7 @@
                     <option value="">All Types</option>
                     <option value="Notes" {% if selected_type == 'Notes' %}selected{% endif %}>Notes</option>
                     <option value="Question Paper" {% if selected_type == 'Question Paper' %}selected{% endif %}>Question Paper</option>
-                    <option value="Model Paper" {% if selected_type == 'Model Paper' %}selected{% endif %}>Model Paper</option>
+                    <option value="Study Material" {% if selected_type == 'Study Material' %}selected{% endif %}>Study Material</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -80,7 +80,7 @@
                         <td>{{ note[1] }}</td>
                         <td>{{ note[2] }}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='uploads/' ~ note[3]) }}" class="btn btn-sm btn-success" target="_blank">Download</a>
+                            <a href="{{ note.file_url }}" target="_blank">Download</a>
                             {% if session.get('admin') %}
                                 <a href="/edit/{{ note[4] }}" class="btn btn-sm btn-warning">Edit</a>
                                 <a href="/delete/{{ note[4] }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
@@ -99,7 +99,7 @@
                 <h5>{{ note[0] }}</h5>
                 <p><strong>Subject:</strong> {{ note[1] }}<br>
                    <strong>Type:</strong> {{ note[2] }}</p>
-                <a href="{{ url_for('static', filename='uploads/' ~ note[3]) }}" class="btn btn-success mb-1" target="_blank">Download</a>
+                <a href="{{ note.file_url }}" download="{{ note.title }}.pdf">Download</a>
                 {% if session.get('admin') %}
                     <a href="/edit/{{ note[4] }}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="/delete/{{ note[4] }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>

@@ -1,4 +1,5 @@
 import os
+import re
 import cloudinary.uploader
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, UserMixin
@@ -63,13 +64,20 @@ def upload_note():
     if form.validate_on_submit():
         file = form.pdf_file.data
         if file:
+            filename = file.filename
+            # Sanitize filename: only letters, numbers, dash, underscore, dot
+            filename = re.sub(r'[^A-Za-z0-9_\-\.]', '', filename.replace(' ', '_'))
+            if not filename.lower().endswith('.pdf'):
+                filename += '.pdf'
+
+            # Upload to Cloudinary (do NOT set filename=...)
             result = cloudinary.uploader.upload(
                 file,
-                resource_type="raw",
-                folder="noteopedia_pdfs"
+                resource_type="auto",
+                folder="noteopedia_pdfs",
+                public_id=None
             )
-            # Force direct download link for PDFs
-            file_url = result.get("secure_url").replace("/upload/", "/upload/fl_attachment/")
+            file_url = result.get("secure_url")
 
             new_note = Note(
                 title=form.title.data,
