@@ -80,7 +80,11 @@
                         <td>{{ note[1] }}</td>
                         <td>{{ note[2] }}</td>
                         <td>
+<<<<<<< HEAD
                             <a href="{{ note.file_url }}" target="_blank">Download</a>
+=======
+                            <a href="{{ note.file_url | replace('/upload/', '/upload/fl_attachment:' ~ note.title|replace(' ', '_') ~ '.pdf/') }}" target="_blank">Download</a>
+>>>>>>> ee16b5bb3c741cc6739ff1202490fb50a76afb5c
                             {% if session.get('admin') %}
                                 <a href="/edit/{{ note[4] }}" class="btn btn-sm btn-warning">Edit</a>
                                 <a href="/delete/{{ note[4] }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
@@ -99,7 +103,14 @@
                 <h5>{{ note[0] }}</h5>
                 <p><strong>Subject:</strong> {{ note[1] }}<br>
                    <strong>Type:</strong> {{ note[2] }}</p>
+<<<<<<< HEAD
                 <a href="{{ note.file_url }}" download="{{ note.title }}.pdf">Download</a>
+=======
+                <a href="{{ note.file_url }}" class="btn btn-sm btn-success" download>
+    📄 Download PDF
+</a>
+
+>>>>>>> ee16b5bb3c741cc6739ff1202490fb50a76afb5c
                 {% if session.get('admin') %}
                     <a href="/edit/{{ note[4] }}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="/delete/{{ note[4] }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>

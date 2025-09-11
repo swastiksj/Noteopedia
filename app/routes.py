@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, UserMixin
 from sqlalchemy import text
 from .forms import QuestionForm, LoginForm, UploadForm, EditForm, ContactForm
 from .models import Note, Contact, db
+from .utils import upload_pdf_to_cloudinary
 
 # Import Google Gemini client
 from google import genai
@@ -58,12 +59,13 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', notes=notes, form=form)
 
 # Upload Note (Cloudinary)
-@main.route('/upload-note', methods=['POST'])
-def upload_note():
+@main.route('/upload_note', methods=['POST'])
+def upload():
     form = UploadForm()
     if form.validate_on_submit():
         file = form.pdf_file.data
         if file:
+<<<<<<< HEAD
             filename = file.filename
             # Sanitize filename: only letters, numbers, dash, underscore, dot
             filename = re.sub(r'[^A-Za-z0-9_\-\.]', '', filename.replace(' ', '_'))
@@ -78,21 +80,28 @@ def upload_note():
                 public_id=None
             )
             file_url = result.get("secure_url")
+=======
+            # Upload to Cloudinary
+            download_url = upload_pdf_to_cloudinary(file, file.filename)
+>>>>>>> ee16b5bb3c741cc6739ff1202490fb50a76afb5c
 
+            # Save into database with all fields
             new_note = Note(
                 title=form.title.data,
                 subject=form.subject.data,
                 level=form.level.data,
                 type=form.type.data,
-                file_url=file_url
+                file_url=download_url
             )
             db.session.add(new_note)
             db.session.commit()
-            flash('✅ Note uploaded successfully!')
+
+            flash("✅ PDF uploaded successfully!", "success")
             return redirect(url_for('main.admin_dashboard'))
 
-    flash('❌ Failed to upload note.', 'danger')
+    flash("❌ Invalid file format. Please upload a PDF.", "danger")
     return redirect(url_for('main.admin_dashboard'))
+
 
 # Edit Note
 @main.route('/edit/<int:note_id>', methods=['GET', 'POST'])
