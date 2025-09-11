@@ -6,7 +6,6 @@ from flask_login import login_user, logout_user, UserMixin
 from sqlalchemy import text
 from .forms import QuestionForm, LoginForm, UploadForm, EditForm, ContactForm
 from .models import Note, Contact, db
-from .utils import upload_pdf_to_cloudinary
 
 # Import Google Gemini client
 from google import genai
