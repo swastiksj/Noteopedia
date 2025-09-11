@@ -65,7 +65,6 @@ def upload():
     if form.validate_on_submit():
         file = form.pdf_file.data
         if file:
-<<<<<<< HEAD
             filename = file.filename
             # Sanitize filename: only letters, numbers, dash, underscore, dot
             filename = re.sub(r'[^A-Za-z0-9_\-\.]', '', filename.replace(' ', '_'))
@@ -80,10 +79,6 @@ def upload():
                 public_id=None
             )
             file_url = result.get("secure_url")
-=======
-            # Upload to Cloudinary
-            download_url = upload_pdf_to_cloudinary(file, file.filename)
->>>>>>> ee16b5bb3c741cc6739ff1202490fb50a76afb5c
 
             # Save into database with all fields
             new_note = Note(
@@ -91,16 +86,16 @@ def upload():
                 subject=form.subject.data,
                 level=form.level.data,
                 type=form.type.data,
-                file_url=download_url
+                file_url=file_url,
             )
             db.session.add(new_note)
             db.session.commit()
 
             flash("✅ PDF uploaded successfully!", "success")
             return redirect(url_for('main.admin_dashboard'))
-
-    flash("❌ Invalid file format. Please upload a PDF.", "danger")
-    return redirect(url_for('main.admin_dashboard'))
+            
+        flash("❌ Invalid file format. Please upload a PDF.", "danger")
+        return redirect(url_for('main.admin_dashboard'))
 
 
 # Edit Note
