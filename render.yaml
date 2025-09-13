@@ -3,10 +3,12 @@ services:
     name: noteopedia
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn run:app
-    plan: free
+    startCommand: gunicorn app:create_app()
     envVars:
-      - key: FLASK_ENV
-        value: production
       - key: DATABASE_URL
-        value: sqlite:///notes.db
+        fromDatabase:
+          name: noteopedia-db
+          property: connectionString
+databases:
+  - name: noteopedia-db
+    plan: free
